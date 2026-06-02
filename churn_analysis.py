@@ -1,95 +1,154 @@
 import pandas as pd
 import numpy as np
+
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.metrics import confusion_matrix, classification_report
+
+from sklearn.metrics import (
+    classification_report,
+    confusion_matrix,
+    roc_auc_score
+)
+
 from imblearn.over_sampling import SMOTE
 
 # -----------------------
-# Load Data
+# 1. Load Data
 # -----------------------
-df = pd.read_csv("retail_uk.csv", parse_dates=['InvoiceDate'])
-print("Columns in data:", df.columns)
-print("\nSample data:\n", df.head())
+df = pd.read_csv("retail_uk.csv", parse_dates=["InvoiceDate"])
 
-# -----------------------
-# RFM Calculation
-# -----------------------
-snapshot_date = df['InvoiceDate'].max() + pd.Timedelta(days=1)
-
-rfm = df.groupby('CustomerID').agg({
-    'InvoiceDate': lambda x: (snapshot_date - x.max()).days,  # Recency
-    'InvoiceNo': 'nunique',                                   # Frequency
-    'Quantity': 'sum'                                         # Monetary (simplified)
-}).reset_index()
-
-rfm.columns = ['CustomerID', 'Recency', 'Frequency', 'Monetary']
+# Basic cleanup (important in real projects)
+df = df.dropna(subset=["CustomerID"])
+df["CustomerID"] = df["CustomerID"].astype(int)
 
 # -----------------------
-# Realistic Churn Labeling (~25% churn)
+# 2. Feature Engineering (RFM)
 # -----------------------
-np.random.seed(42)
+snapshot_date = df["InvoiceDate"].max() + pd.Timedelta(days=1)
 
-# Base churn: Recency > 90 days
-base_churn = (rfm['Recency'] > 90).astype(int)
+rfm = df.groupby("CustomerID").agg(
+    Recency=("InvoiceDate", lambda x: (snapshot_date - x.max()).days),
+    Frequency=("InvoiceNo", "nunique"),
+    Monetary=("Quantity", "sum")  # replace with Quantity * Price if available
+).reset_index()
 
-# Random churn: 15% of active customers
-random_churn = (np.random.rand(len(rfm)) < 0.15).astype(int)
-
-# Combine
-rfm['Churn'] = np.maximum(base_churn, random_churn)
-
-print("\nClass distribution after labeling:\n", rfm['Churn'].value_counts())
+# Optional improvement (recommended if UnitPrice exists):
+# df["Revenue"] = df["Quantity"] * df["UnitPrice"]
 
 # -----------------------
-# Features & Target
+# 3. Churn Definition (Business-Defensible)
 # -----------------------
-X = rfm[['Recency', 'Frequency', 'Monetary']]
-y = rfm['Churn']
+# Definition: customer is churned if inactive for > 90 days
+CHURN_THRESHOLD = 90
+rfm["Churn"] = (rfm["Recency"] > CHURN_THRESHOLD).astype(int)
 
-# Standardize features
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X)
+print("Churn distribution:")
+print(rfm["Churn"].value_counts(normalize=True))
 
 # -----------------------
-# Train/Test Split
+# 4. Features & Target
+# -----------------------
+X = rfm[["Recency", "Frequency", "Monetary"]]
+y = rfm["Churn"]
+
+# -----------------------
+# 5. Train/Test Split (NO leakage)
 # -----------------------
 X_train, X_test, y_train, y_test = train_test_split(
-    X_scaled, y, test_size=0.3, random_state=42, stratify=y
+    X,
+    y,
+    test_size=0.3,
+    random_state=42,
+    stratify=y
 )
 
-print("\nClass distribution in training set before SMOTE: \n", pd.Series(y_train).value_counts())
+# -----------------------
+# 6. Scaling (fit ONLY on train)
+# -----------------------
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
 
 # -----------------------
-# SMOTE Oversampling
+# 7. Handle Class Imbalance (SMOTE only on training data)
 # -----------------------
 smote = SMOTE(random_state=42)
-X_train_res, y_train_res = smote.fit_resample(X_train, y_train)
 
-print("\nClass distribution after SMOTE:\n", pd.Series(y_train_res).value_counts())
+X_train_res, y_train_res = smote.fit_resample(
+    X_train_scaled,
+    y_train
+)
+
+print("\nAfter SMOTE:")
+print(pd.Series(y_train_res).value_counts())
 
 # -----------------------
-# Logistic Regression
+# 8. Model 1: Logistic Regression (Baseline)
 # -----------------------
-lr = LogisticRegression(random_state=42)
+lr = LogisticRegression(max_iter=1000, random_state=42)
 lr.fit(X_train_res, y_train_res)
-y_pred_lr = lr.predict(X_test)
 
-print("\n--- Logistic Regression ---")
-print("Accuracy:", lr.score(X_test, y_test))
-print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred_lr))
-print("Classification Report:\n", classification_report(y_test, y_pred_lr))
+lr_pred = lr.predict(X_test_scaled)
+lr_proba = lr.predict_proba(X_test_scaled)[:, 1]
+
+print("\n====================")
+print("LOGISTIC REGRESSION")
+print("====================")
+print("ROC-AUC:", roc_auc_score(y_test, lr_proba))
+print(confusion_matrix(y_test, lr_pred))
+print(classification_report(y_test, lr_pred))
 
 # -----------------------
-# Random Forest
+# 9. Model 2: Random Forest (Non-linear model)
 # -----------------------
-rf = RandomForestClassifier(random_state=42, n_estimators=100)
+rf = RandomForestClassifier(
+    n_estimators=200,
+    random_state=42,
+    class_weight="balanced"
+)
+
 rf.fit(X_train_res, y_train_res)
-y_pred_rf = rf.predict(X_test)
 
-print("\n--- Random Forest ---")
-print("Accuracy:", rf.score(X_test, y_test))
-print("Confusion Matrix:\n", confusion_matrix(y_test, y_pred_rf))
-print("Classification Report:\n", classification_report(y_test, y_pred_rf))
+rf_pred = rf.predict(X_test_scaled)
+rf_proba = rf.predict_proba(X_test_scaled)[:, 1]
+
+print("\n====================")
+print("RANDOM FOREST")
+print("====================")
+print("ROC-AUC:", roc_auc_score(y_test, rf_proba))
+print(confusion_matrix(y_test, rf_pred))
+print(classification_report(y_test, rf_pred))
+
+# -----------------------
+# 10. Feature Importance (Business Insight Layer)
+# -----------------------
+feature_importance = pd.DataFrame({
+    "Feature": X.columns,
+    "Importance": rf.feature_importances_
+}).sort_values(by="Importance", ascending=False)
+
+print("\n====================")
+print("FEATURE IMPORTANCE")
+print("====================")
+print(feature_importance)
+
+# -----------------------
+# 11. Business Interpretation (Key for Interviews)
+# -----------------------
+print("\n====================")
+print("BUSINESS INSIGHT SUMMARY")
+print("====================")
+
+top_feature = feature_importance.iloc[0]
+
+print(
+    f"Most important churn driver: {top_feature['Feature']} "
+    f"(importance = {top_feature['Importance']:.3f})"
+)
+
+print(
+    "Recommendation: Target high-risk customers with high recency and low frequency "
+    "using retention campaigns or incentives."
+)
