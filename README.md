@@ -1,65 +1,127 @@
-🛒 E-commerce Customer Behaviour Analysis – Python
+# 🛒 E-commerce Customer Behaviour Analysis
 
-End-to-end retail data analytics project using Python, including data cleaning, exploratory data analysis (EDA), customer segmentation, and churn analysis on UK retail data.
+## Project Overview
 
-📊 Project Overview
+This project analyzes customer purchasing behavior using UK retail transaction data to uncover patterns in customer engagement, purchasing activity, and retention. The analysis focuses on customer segmentation and churn identification to support data-driven customer retention and lifecycle management strategies.
 
-This project demonstrates an end-to-end retail data analytics workflow using Python.
-It transforms raw UK retail transaction data into meaningful business insights through data cleaning, EDA, customer segmentation, and churn analysis.
+By transforming transactional data into actionable business insights, the project demonstrates how customer analytics can be leveraged to improve engagement, increase customer lifetime value, and reduce customer attrition.
 
-🎯 Objectives
+---
 
-🧹 Clean and preprocess retail transaction data
+## Business Problem
 
-📈 Analyze sales and customer purchasing behavior
+Understanding customer behavior is critical for improving retention and maximizing long-term revenue. Businesses often struggle to identify which customers are most valuable, which customers are at risk of disengagement, and where retention efforts should be focused.
 
-👥 Segment customers based on transaction patterns
+This analysis was conducted to:
 
-🚨 Identify customer churn trends
+* Understand customer purchasing patterns and engagement trends
+* Identify high-value customer segments
+* Detect customers at risk of churn
+* Support targeted retention and marketing initiatives
+* Improve customer lifecycle management
 
-💡 Generate insights to support business decision-making
+---
 
-🛠 Tools & Technologies
+## Analytical Approach
 
-🐍 Python
+### Data Preparation
 
-📊 Pandas, NumPy
+* Cleaned and validated transactional retail data
+* Removed invalid and duplicate records
+* Standardized customer and transaction information
+* Prepared datasets for downstream analysis
 
-📉 Matplotlib, Seaborn
+### Exploratory Data Analysis
 
-🤖 Scikit-learn
+* Evaluated purchasing frequency and order behavior
+* Analyzed revenue contribution across customer groups
+* Identified seasonal and transactional trends
+* Examined customer engagement patterns
 
-📓 Jupyter Notebook
+### Customer Segmentation
 
-✨ Key Highlights
+* Segmented customers based on purchasing behavior and transaction activity
+* Identified high-value, loyal, occasional, and inactive customer groups
+* Compared customer characteristics across segments
 
-🧹 Cleaned and prepared raw transactional data
+### Churn Analysis
 
-💎 Identified high-value and at-risk customers
+* Assessed customer inactivity patterns
+* Identified customers with elevated churn risk
+* Evaluated behavioral indicators associated with customer attrition
 
-📊 Analyzed sales trends and customer behavior
+---
 
-🔍 Built a churn-ready analytical dataset
+## Key Findings
 
-🚀 How to Run
+* A relatively small group of customers contributed a significant proportion of total revenue.
+* Purchasing frequency and customer value varied considerably across segments.
+* Several customer groups demonstrated declining engagement, indicating increased churn risk.
+* Customer segmentation revealed opportunities for targeted retention and re-engagement campaigns.
 
-📥 Clone the repository
+---
 
-📦 Install dependencies:
+## Business Recommendations
 
-pip install -r requirements.txt
+### Customer Retention
 
-📝 Run the notebooks in sequence
+* Develop targeted retention campaigns for at-risk customers.
+* Implement personalized engagement strategies for declining customer segments.
+* Monitor customer activity to proactively identify churn indicators.
 
-⚙️ Technical Details
+### Customer Value Optimization
 
-🐍 Languages & Tools: Python, SQL, Pandas, NumPy, Scikit-learn
+* Introduce loyalty programs for high-value customers.
+* Create personalized offers based on purchasing behavior.
+* Increase engagement with customers demonstrating repeat purchase potential.
 
-📁 Structure: src/ – code | data/ – datasets | output/ – results
+### Data-Driven Marketing
 
-⚡ Setup: pip install -r requirements.txt
+* Use customer segmentation to improve campaign targeting.
+* Align promotional activities with customer purchasing patterns.
+* Prioritize retention efforts toward high-value customer groups.
 
-▶️ Run: python src/main.py
+---
 
-📝 Notes: Ensure data files are correctly formatted; logs are saved in logs/ folder
-<img width="1000" height="1000" alt="image" src="https://github.com/user-attachments/assets/96261185-d12a-4385-b0f2-01a486a7ae2c" />
+## Technology Stack
+
+* Python
+* Pandas
+* NumPy
+* Matplotlib
+* Seaborn
+* Scikit-learn
+
+---
+
+## Skills Demonstrated
+
+* Customer Analytics
+* Customer Segmentation
+* Churn Analysis
+* Exploratory Data Analysis (EDA)
+* Data Cleaning & Transformation
+* Business Intelligence
+* Data Visualization
+* Retention Strategy Development
+
+---
+
+## Project Structure
+
+```text
+E-commerce-Customer-Behaviour-Analysis/
+│
+├── exploratory_analysis.py
+├── customer_segmentation.py
+├── churn_analysis.py
+├── run_all.py
+├── cleaned_retail.csv
+├── requirements.txt
+└── README.md
+```
+
+
+
+<img width="1000" height="1000" alt="image" src="https://github.com/user-attachments/assets/f4c1b6e6-e37a-4f99-89e8-14afcd39aac2" />
+
