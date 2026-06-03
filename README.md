@@ -130,5 +130,6 @@ This project demonstrates a complete customer intelligence system that transform
 It reflects real-world analytics practices including structured pipelines, machine learning workflows, and business-oriented decision making.
 
 
-<img width="1000" height="1000" alt="image" src="https://github.com/user-attachments/assets/f4c1b6e6-e37a-4f99-89e8-14afcd39aac2" />
 
+
+<img width="1000" height="1000" alt="image" src="https://github.com/user-attachments/assets/f4c1b6e6-e37a-4f99-89e8-14afcd39aac2" /> does this image resemble
