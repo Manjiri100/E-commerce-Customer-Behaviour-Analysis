@@ -1,0 +1,18 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# Environment
+.env
+venv/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Data files (important for ML projects)
+data/raw/
+data/processed/
+
+# OS files
+.DS_Store
+Thumbs.db

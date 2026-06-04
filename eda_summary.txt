@@ -1,0 +1,67 @@
+📊 EDA Summary — E-Commerce Customer Behaviour Analysis
+🧾 Dataset Overview
+Dataset contains online retail transaction data
+Key fields:
+InvoiceDate
+CustomerID
+Quantity
+UnitPrice
+InvoiceNo
+🧹 Data Cleaning
+Removed missing CustomerID values
+Filtered out invalid transactions (e.g., negative quantities)
+Converted CustomerID to integer type
+Ensured proper datetime formatting for InvoiceDate
+💰 Feature Engineering (RFM Analysis)
+
+We built RFM metrics:
+
+Recency → Days since last purchase
+Frequency → Number of purchases
+Monetary → Total spending
+
+These features help understand:
+
+Customer engagement
+Purchase behavior
+Value contribution
+👥 Customer Segmentation (K-Means Clustering)
+
+Customers were grouped into behavioral clusters:
+
+📌 Cluster Insights:
+High-value active customers
+High frequency & high monetary value
+Regular customers
+Moderate spending and activity
+At-risk customers
+High recency (inactive for long time)
+Low-value customers
+Low frequency and low spending
+📉 Churn Analysis
+
+A churn model was built using RFM features.
+
+Key results:
+Recency is the most important predictor (~97%)
+Frequency and Monetary have minor influence
+Model performance:
+Accuracy: ~1.00 (very strong separation in dataset)
+ROC-AUC: 1.0
+
+👉 Interpretation:
+Customers are very clearly separable into churn vs active groups based on behavior patterns.
+
+🔑 Key Business Insights
+Recent activity is the strongest indicator of churn risk
+High-value customers are identifiable using RFM
+Customer base is naturally segmented into clear behavioral groups
+Retention strategies should focus on high-recency inactive users
+🚀 Outcome
+
+This EDA forms the foundation for:
+
+Churn prediction model
+Customer segmentation system
+Business decision-making dashboard
+FastAPI deployment pipeline
