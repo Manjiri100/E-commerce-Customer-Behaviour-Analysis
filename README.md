@@ -22,6 +22,3 @@ This project analyzes customer behaviour in an e-commerce dataset to identify pu
 - Matplotlib
 - Seaborn
 
----
-
-## 📂 Project Structure
